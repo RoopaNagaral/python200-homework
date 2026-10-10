@@ -26,9 +26,11 @@ class Thermometer:
 # --- Classes ---
 # Q2 - Add a __repr__ to Thermometer that prints something like
     
-    def __repr__(self):
-        return(
-            f"Thermometer(location='Charlotte', n_readings=4, average=18.6)"
+    def __repr__(self) -> str:
+        return (
+            f"Thermometer(location={self.location!r}, "
+            f"n_readings={len(self.readings)}, "
+            f"average={self.average():.1f})"
         )
 
 my_thermometer = Thermometer("dallas")
@@ -351,17 +353,18 @@ raise, so the test cannot pass for the wrong reason.
 # --- pytest ---
 # Q3
 
-@pytest.mark.parametrize("values",
+@pytest.mark.parametrize(
+    "values, expected",
     [
-        ([25,60]),
-        ([-30, 4, 80]),
-        ([70]),
-        ([8, 21, 67, 34, 45]),
-    ],
+        ([1, 2, 3], 2.0),
+        ([10, 20, 30, 40], 25.0),
+        ([5], 5.0),
+        ([0, 0, 0], 0.0),
+        ([2.5, 3.5], 3.0),
+    ]
 )
-
-def test_mean_values(values):
-    assert mean(values)
+def test_mean_values(values, expected):
+    assert mean(values) == pytest.approx(expected)
     
 """
 warmup_01.py::test_mean_values[values0] PASSED [ 50%]
