@@ -10,12 +10,12 @@ Exports the main public classes so callers can import directly from weatherkit.
 # For now, leave placeholders.
 
 try:
-    from .records import HourlyReading
+    from .schemas import HourlyBlock,WeatherResponse
 except ImportError:
     pass
 
 try:
-    from .schemas import HourlyBlock,WeatherResponse
+    from .records import HourlyReading
 except ImportError:
     pass
 

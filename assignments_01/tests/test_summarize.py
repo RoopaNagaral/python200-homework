@@ -32,7 +32,7 @@ def test_temp_max_and_min_are_correct(sample_readings, date, expected_max, expec
     summary = next(s for s in summaries if s.date == date)
     assert summary.temp_max == expected_max
     assert summary.temp_min == expected_min
-    
+
 def test_precipitation_sum_adds_up_correctly(sample_readings):
     agg = DailyAggregator(min_hours=1)
     summaries = agg.summarize(sample_readings)
@@ -43,6 +43,13 @@ def test_precipitation_sum_adds_up_correctly(sample_readings):
     assert s_0808.precipitation_sum == pytest.approx(0.1)
     assert s_0809.precipitation_sum == pytest.approx(0.5)
 
+"""
+Deliberately-broken-function note:
+I temporarily broke DailyAggregator by hard-coding precipitation_sum = 0.0.
+The test that correctly caught this failure was:
+    test_precipitation_sum_adds_up_correctly
+This confirms the test suite detects real behavioral regressions.
+"""
 
 def test_day_with_fewer_than_min_hours_is_dropped_and_reported():
     readings = [

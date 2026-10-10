@@ -94,6 +94,7 @@ on each thermometer, rather than passingthe threshold value through twenty seper
 
 @dataclass(frozen=True)
 class Station:
+    """A Station represents a physical weather‑monitoring location with its ID, name, and geographic coordinates."""
     station_id: str
     name: str
     latitude: float
@@ -155,7 +156,7 @@ class StationBatch:
         """ Returns the station with the greatest elevation, or None if the batch is empty"""
         if not self.stations:
             return None
-        return max(self.stations)
+        return max(self.stations, key=lambda s: s.elevation)
     
 stations_batch = StationBatch("Dallas")
 print("\nStation batch:")
@@ -187,7 +188,7 @@ class Reading(BaseModel):
     
     # --- Pydantic ---
     # Q4 - Add a model_validator(mode="after")
-    model_validator(mode="after")
+    @model_validator(mode="after")
     def reject_failed_sensor(self):
         """ reading where humidity is exactly 0.0 and temperature_c is below -40"""
         if self.humidity == 0.0 and self.temperature_c < -40:
@@ -202,28 +203,39 @@ print(my_readings)
 # --- Pydantic ---
 # Q2 - Show three separate failures, each wrapped in try / except ValidationError
 print("\nErrors:")
+# 1. Missing timestamp
 try:
     Reading(
         station_id="DAL",
         temperature_c= 150.0, 
         humidity=43.0
     )
-    
+except ValidationError as e:
+    print("\nCase 1 failed")
+    print(e)
+
+# 2. Bad timestamp format   
+try:    
     Reading(
         station_id="CEL",
         timestamp= "11:12:00",
         temperature_c= 150.0, 
         humidity=43.0
     )
-    
+except ValidationError as e:
+    print("\nCase 2 failed")
+    print(e)
+
+# 3. Humidity is not a float
+try:
     Reading(
         station_id="MCK",
         timestamp= "1:36:05",
         temperature_c= 40.0, 
         humidity="very humid"
     )
-    
 except ValidationError as e:
+    print("\nCase 3 failed")
     print(e)
  
 print("\nReadings passed with different datatype:")       
@@ -266,7 +278,7 @@ print("\nErrors:")
 try:
     Reading(
         station_id="TX",
-        temperature_c= "10.0", 
+        temperature_c= "warm", 
         humidity=43.0
     )
     
