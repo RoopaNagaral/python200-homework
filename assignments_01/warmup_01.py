@@ -1,6 +1,6 @@
+import pytest
 from dataclasses import dataclass, FrozenInstanceError, field
 from pydantic import BaseModel, Field, ValidationError, model_validator
-import pytest
 
 # --- Classes ---
 # Q1 - Write a class Thermometer that stores a list of temperature readings in Celsius.
@@ -32,11 +32,7 @@ class Thermometer:
         )
 
 my_thermometer = Thermometer("dallas")
-
-print(my_thermometer.add(23))
-print(my_thermometer.add(10))
-print(my_thermometer.add(3))
-print(my_thermometer.add(50))
+my_thermometer.readings = [23,10,3,50]
 
 print("\nAverage of readings:")
 print(my_thermometer.average())
@@ -160,9 +156,10 @@ class StationBatch:
     
 stations_batch = StationBatch("Dallas")
 print("\nStation batch:")
-print(stations_batch.add(35.0))
-print(stations_batch.add(15.0))
-print(stations_batch.add(80.0))
+
+stations_batch.add(Station("DAL", "Dallas", 32.8, -96.8, 430.0))
+stations_batch.add(Station("CEL", "Celina", 33.0, -96.8, 720.0))
+stations_batch.add(Station("MCK", "McKinney", 33.2, -96.6, 640.0))
 
 print(stations_batch)
 
