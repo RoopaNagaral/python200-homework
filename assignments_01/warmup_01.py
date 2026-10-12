@@ -66,20 +66,18 @@ class TemperatureAlert:
         self.threshold = threshold
         
     def breaches(self, thermometer):
-        mylist = []
-        for i in thermometer:
-            if i > self.threshold:
-                mylist.append(i)
-        return mylist            
+        if not hasattr(thermometer, "readings"):
+            raise TypeError("breaches() expects a Thermometer instance")
+        return [r for r in thermometer.readings if r > self.threshold]   
         
 my_threshold1 = TemperatureAlert(15.0)
 my_threshold2 = TemperatureAlert(28.0)
 
 print("\nThreshold1:")
-print(my_threshold1.breaches(my_thermometer.readings))
+print(my_threshold1.breaches(my_thermometer))
 
 print("\nThreshold2:")
-print(my_threshold2.breaches(my_thermometer.readings))
+print(my_threshold2.breaches(my_thermometer))
 
 '''
 Subjective Comment: the threshold lives on TemperatureAlert object so configuration is set once and 
@@ -358,9 +356,10 @@ raise, so the test cannot pass for the wrong reason.
     [
         ([1, 2, 3], 2.0),
         ([10, 20, 30, 40], 25.0),
-        ([5], 5.0),
+        ([5], 5.0),                 # single-element case
         ([0, 0, 0], 0.0),
         ([2.5, 3.5], 3.0),
+        ([-5, 5], 0.0),             # negative-number case (required by Pytest Q3)
     ]
 )
 def test_mean_values(values, expected):
