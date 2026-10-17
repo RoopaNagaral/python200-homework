@@ -101,10 +101,13 @@ print("\nSlope:", model.coef_[0])
 print("RMSE:", rmse)
 print("R²:", r2)
 
-"""
-Comment: RMSE is read in degrees. A good answer states that a typical prediction is off by about that many degrees. 
-For example, an RMSE of 2.5 means predictions are typically off by a little more than 2 degrees.
-"""
+# Comment:
+# I expect is_summer to help predict the daily high because June, July, and August
+# are typically the warmest months of the year. Temperatures follow a seasonal
+# pattern, so knowing whether a day falls in summer adds useful information that
+# the model cannot get from the daily low or precipitation alone. In most climates,
+# summer days have consistently higher highs, so this feature should improve the
+# model’s ability to predict temperature_2m_max.
 
 # Task 5: Full Model
 feature_cols = ["temperature_2m_min", "precipitation_sum",
@@ -133,7 +136,7 @@ Comment on the train/test gap: the student compares train R² and test R². For 
 the gap is usually small, which indicates the model generalizes well and is not overfitting.
 """
 
-for name, coef in zip(feature_cols, model.coef_):
+for name, coef in zip(feature_cols, full_model.coef_):
     print(f"{name:22s}: {coef:+.3f}")
     
 """

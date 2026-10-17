@@ -23,8 +23,11 @@ print("Low 18:", model.predict([[18]])[0])
 
 
 # Q2 -
-x = np.array([10, 20, 30, 40, 50]).reshape(-1, 1)
-print("\nX shape:", x.shape)
+x = np.array([10, 20, 30, 40, 50])
+print("\nOriginal:", x.shape)
+
+x_2d = x.reshape(-1,1)
+print("X_2d shape:", x_2d.shape)
 
 """
 Subjective Comment: cikit-learn expects X as a 2D array of shape (n_samples, n_features). 
