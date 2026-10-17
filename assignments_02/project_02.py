@@ -81,6 +81,14 @@ df["is_summer"] = df["month"].isin([6, 7, 8]).astype(int)
 print("\nNumber of Summer and Non summer days")
 print(df["is_summer"].value_counts())
 
+# Comment:
+# I expect is_summer to help predict the daily high because June, July, and August
+# are typically the warmest months of the year. Temperatures follow a seasonal
+# pattern, so knowing whether a day falls in summer adds useful information that
+# the model cannot get from the daily low or precipitation alone. In most climates,
+# summer days have consistently higher highs, so this feature should improve the
+# model’s ability to predict temperature_2m_max.
+
 # Task 4: Baseline Model
 X = df[["temperature_2m_min"]]
 Y = df["temperature_2m_max"]
@@ -101,13 +109,7 @@ print("\nSlope:", model.coef_[0])
 print("RMSE:", rmse)
 print("R²:", r2)
 
-# Comment:
-# I expect is_summer to help predict the daily high because June, July, and August
-# are typically the warmest months of the year. Temperatures follow a seasonal
-# pattern, so knowing whether a day falls in summer adds useful information that
-# the model cannot get from the daily low or precipitation alone. In most climates,
-# summer days have consistently higher highs, so this feature should improve the
-# model’s ability to predict temperature_2m_max.
+
 
 # Task 5: Full Model
 feature_cols = ["temperature_2m_min", "precipitation_sum",
