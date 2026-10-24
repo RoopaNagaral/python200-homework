@@ -194,13 +194,12 @@ Coefficient interpretation:
 """
 # 1. The model with the higher accuracy was KNN.
 
-# 2. For a running app, precision is important because a false positive
-# means telling someone to run on a bad weather day. A false negative
-# means missing a good day to run.
+# 2. Logistic Regression was also competitive and easier to interpret.
 
-# 3. I would deploy Logistic Regression because because it had better performance and is
-# a good balance of accuracy and usability. Logistic Regression is easier
-# to interpret, while KNN may perform better if the data has complex patterns."""
+# 3. I would deploy Logistic Regression because it is simpler to explain,
+# easier to maintain, and provides probability scores, even though KNN
+# achieved slightly higher accuracy.
+"""
 
 # Task 6: Save the Model
 model_to_save = lr_pipeline     
