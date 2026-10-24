@@ -70,17 +70,12 @@ print(f"Fraction of good days: {good_fraction:.2%}")
 
 """
 Class balance interpretation:
-# Good days: X
-# Skip days: Y
-#
-# Fraction of good days: Z%
-#
-# This fraction seems reasonable for the city's climate because
-# [brief explanation based on your location and weather patterns].
-#
-# If the classes are highly imbalanced (for example, <20% or >80% good days),
-# accuracy alone may be misleading. Metrics such as precision, recall, F1-score,
-# and the confusion matrix become more important for evaluating model performance.
+# Good days: 109
+# Skip days: 256
+# The fraction of good days is 29.86%.
+# This seems reasonable for Celina, Texas, because many days are either
+# very hot, rainy, windy, or otherwise not ideal for outdoor activities,
+# so only about 30% of days meeting the "good day" criteria is believable.
 """
 
 # Task 3: Build and Evaluate a KNN Classifier
@@ -168,23 +163,18 @@ print(coef_df.tail())
 
 """
 Coefficient interpretation:
-#
 # Positive coefficients increase the probability that a day is classified
 # as good_for_running = 1.
-#
 # Negative coefficients increase the probability that a day is classified
 # as a skip day (good_for_running = 0).
-#
 # The features with the most negative coefficients are the strongest
 # indicators that a day should be skipped. For example:
 # - Higher precipitation typically pushes predictions toward "skip".
 # - Higher maximum wind speed often pushes predictions toward "skip".
 # - Extremely high temperatures may also contribute to skip predictions.
-#
 # Features with large positive coefficients support a "good" running day.
 # For example, moderate temperatures, low precipitation, and lower wind
 # speeds generally increase the likelihood of a good running day.
-#
 # Because features were standardized before fitting, coefficient magnitudes
 # can be compared directly. Larger absolute values indicate a stronger
 # influence on the prediction.
@@ -193,12 +183,15 @@ Coefficient interpretation:
 # Task 5: Compare and Choose
 """
 # 1. The model with the higher accuracy was KNN.
-
 # 2. Logistic Regression was also competitive and easier to interpret.
-
 # 3. I would deploy Logistic Regression because it is simpler to explain,
 # easier to maintain, and provides probability scores, even though KNN
 # achieved slightly higher accuracy.
+# 4. For a running app, a false positive means recommending a run on a
+# bad-weather day, which could lead to an unpleasant or unsafe experience.
+# A false negative means missing a good day for running. In this case,
+# avoiding false positives may be slightly more important because user
+# safety and trust are more valuable than occasionally missing a good run.
 """
 
 # Task 6: Save the Model
