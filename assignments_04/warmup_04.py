@@ -44,9 +44,11 @@ class DayForecast:
      def summary(self) -> str:
         rain = "rain expected" if self.will_rain else "no rain"
         return f"{self.date}: high {self.high_c}C, {rain}"
-    
-dayforcast1 = DayForecast("2023-06-15",24.1, "rain expected")
-dayforcast2 = DayForecast("2023-06-16",26.1, "")
+
+# @dataclass automatically created the __init__() method, so I did not have to write one myself.
+
+dayforcast1 = DayForecast("2023-06-15",24.1, True)
+dayforcast2 = DayForecast("2023-06-16",26.1, False)
 
 print("\nDay One forecast:", dayforcast1.summary())
 print("Day Two forecast:", dayforcast2.summary())

@@ -21,9 +21,6 @@ class Prediction:
     label : str 
     probability : float
     
-prediction = Prediction(label="good", probability=0.87)
-
-print(prediction)
 
 # Task 2: The WeatherClassifier Class
 
@@ -129,7 +126,3 @@ days = [
     }
 ]
 
-results = classifier.predict(days)
-print(results)
-for result in results:
-    print(result)
