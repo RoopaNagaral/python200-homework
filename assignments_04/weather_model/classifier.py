@@ -1,4 +1,4 @@
-from dataclasses import dataclass, Field
+from dataclasses import dataclass
 import joblib
 from pathlib import Path
 import os
@@ -112,17 +112,4 @@ class WeatherClassifier:
             )
 
         return results
-
-model_folder = Path(__file__).parent.parent / "models"
-model_path = model_folder / "weather_classifier.pkl"
-classifier = WeatherClassifier(model_path)
-
-days = [
-    {
-        "temperature_2m_max": 22,
-        "temperature_2m_min": 10,
-        "precipitation_sum": 0.0,
-        "wind_speed_10m_max": 12,
-    }
-]
 
