@@ -1,0 +1,20 @@
+{
+    "python_version": "3.12.15 (main, Oct  3 2026, 01:05:37) [MSC v.1944 64 bit (AMD64)]",
+    "sklearn_version": "1.9.1",
+    "feature_names": [
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "precipitation_sum",
+        "wind_speed_10m_max"
+    ],
+    "label": "good_for_running",
+    "label_rule": {
+        "temperature_2m_max": "7 to 26 C",
+        "temperature_2m_min": ">= 0 C",
+        "precipitation_sum": "< 3 mm",
+        "wind_speed_10m_max": "< 30 km/h"
+    },
+    "city": "Celina",
+    "test_accuracy": 0.8493,
+    "test_f1": 0.7442
+}
