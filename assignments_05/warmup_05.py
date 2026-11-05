@@ -265,6 +265,10 @@ for text in examples:
     Example 2:
     Text: "This was terrible."
     Sentiment: Negative
+    
+    Example 3:
+    Text: "The price was great, but the documentation was confusing."
+    Sentiment: Mixed
 
     Text: "{text}"
     Sentiment:

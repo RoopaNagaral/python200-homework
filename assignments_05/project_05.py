@@ -25,10 +25,6 @@ def get_completion(messages, model="gpt-4o-mini", temperature=0.7):
     return response.choices[0].message.content
 
 # 1. Start with the system message that defines the bot's personality
-messages = [
-    {"role": "system", 
-    "content": "You are a friendly, competent job application coach who helps candidates find jobs that fit their needs. Ask questions to learn their job preferences, and use case before recommending options."}
-]
 
 system_prompt = """
 You are an experienced job application coach assisting job seekers with resumes,
