@@ -221,15 +221,15 @@ examples = [
 # -----------------------
 # Zero-shot prompting
 # -----------------------
-print("ZERO-SHOT RESULTS")
+print("\nZERO-SHOT RESULTS")
 for text in examples:
     prompt = f"""
     Classify the sentiment of the following text as Positive, Negative, or Mixed.
 
     Text: "{text}"
     """
-    print(prompt)
-    print("-" * 50)
+    result = get_completion(prompt)
+    print(result)
 
 # -----------------------
 # One-shot prompting
@@ -246,32 +246,33 @@ for text in examples:
     Text: "{text}"
     Sentiment:
     """
-    print(prompt)
-    print("-" * 50)
+    result = get_completion(prompt)
+    print(result)
 
 # -----------------------
 # Few-shot prompting
 # -----------------------
 print("\nFEW-SHOT RESULTS")
+
 for text in examples:
     prompt = f"""
-    Classify the sentiment as Positive, Negative, or Mixed.
+    Classify the sentiment as Positive, Negative, or Neutral.
 
-    Examples:
-    Text: "The product is amazing and easy to use."
+    Example 1:
+    Text: "I love this product."
     Sentiment: Positive
 
-    Text: "The experience was awful and frustrating."
+    Example 2:
+    Text: "This was terrible."
     Sentiment: Negative
-
-    Text: "The design is nice, but the battery life is poor."
-    Sentiment: Mixed
 
     Text: "{text}"
     Sentiment:
     """
-    print(prompt)
-    print("-" * 50)
+
+    result = get_completion(prompt)
+    print(f"Text: {text}")
+    print(f"Sentiment: {result}")
 
 # Comparison:
 # Zero-shot is best when the task is simple and the model already understands it well.
