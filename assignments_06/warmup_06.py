@@ -43,16 +43,18 @@ and examples [^1^] [^3^].)
 # Concepts Q2
 
 """
-Correct: a confident wrong answer is more harmful because users are more likely to trust and act on it 
-without verifying; an "I'm not sure" signals the need to check.
-Should give a concrete harm example (medical, legal, financial advice acted on directly).
-Should connect tone to trust — fluent, authoritative phrasing makes errors harder to catch.
+A confidently wrong answer is more harmful than "I am not sure" because
+people are more likely to trust it and act on incorrect information.
+For example, if an AI confidently tells someone their chest pain is not
+serious, they might delay seeking medical help. The model's confident tone
+can make the answer seem reliable even when it is wrong, so important
+information should always be verified.
 """
 
 # Concepts Q3
 """
 steps = [
-    "Extract text from source documents", - 
+    "Extract text from source documents", -     
     The system loads and extracts text from the documents that will be used as the knowledge source.
     "Split text into chunks", -
     The extracted text is divided into smaller sections so it can be searched efficiently.
