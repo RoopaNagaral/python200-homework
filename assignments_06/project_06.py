@@ -86,20 +86,20 @@ retrieval step could be improved for better relevance.
 question = "Which dairy-free milk option is the most popular among loyalty program members?"
 
 response = query_engine.query(question)
+print("\nStep 5: Answer")
+print(f"\nQ: {question}")
+print(f"A: {response.response}")
 
-for i, node in enumerate(response.source_nodes, start=1):
-    
-    top_node = response.source_nodes[0]
-        
-    document_name = top_node.node.metadata.get(
+for i, node in enumerate(response.source_nodes[:3], start=1):
+    document_name = node.node.metadata.get(
         "file_name",
-        top_node.node.metadata.get("document_name", "Unknown")
+        node.node.metadata.get("document_name", "Unknown")
     )
-        
-    similarity_score = top_node.score
-    chunk_preview = top_node.node.text[:200]
-        
-    print("\nStep 5: Answer")
+
+    similarity_score = node.score
+    chunk_preview = node.node.text[:200]
+
+    print(f"\nRETRIEVED SOURCE NODE {i}")
     print(f"Document: {document_name}")
     print(f"Similarity Score: {similarity_score}")
     print(f"Chunk Text (first 200 chars): {chunk_preview}")

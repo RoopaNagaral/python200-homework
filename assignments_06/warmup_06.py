@@ -52,16 +52,20 @@ Should connect tone to trust — fluent, authoritative phrasing makes errors har
 # Concepts Q3
 """
 steps = [
-    "Extract text from source documents",
-    "Split text into chunks",
-    "Convert text chunks into embeddings",
-    "Receive the user's query",
-    "Embed the user's query",
-    "Retrieve the most relevant chunks",
+    "Extract text from source documents", - 
+    The system loads and extracts text from the documents that will be used as the knowledge source.
+    "Split text into chunks", -
+    The extracted text is divided into smaller sections so it can be searched efficiently.
+    "Convert text chunks into embeddings", -
+    Each text chunk is converted into a numerical vector that captures its semantic meaning.
+    "Receive the user's query", - The system accepts a question from the user.
+    "Embed the user's query", - The user's question is converted into an embedding using the same embedding model.
+    "Retrieve the most relevant chunks", -
+    The system compares the query embedding to stored embeddings and finds the most relevant chunks.
     "Inject retrieved chunks into the prompt",
+    The retrieved context is added to the prompt provided to the language model.
     "Generate a response from the LLM",
-     Key logic: steps 1–3 are the indexing/offline phase (done once, ahead of time); 4–8 are the query/runtime phase. 
-     A common error is putting "receive the query" first or embedding the query before the documents.
+    The language model uses the retrieved information to generate an answer to the user's question.
 ]
 """
 
@@ -145,14 +149,9 @@ A semantic/embedding approach would match on meaning and do better.
 query = "How do I sign up for rewards?"
 simple_keyword_retrieval(query, documents, verbose=True)
 
-"""
-Query "How do I sign up for rewards?" → filtered tokens {how, do, i, sign, up, rewards} (for is a stopword). 
-Most students predict loyalty.txt — but loyalty.txt says "Join our loyalty program… Redeem points," never the 
-words "sign," "up," or "rewards." Overlap is 0 for every document → "No overlapping keywords found."
-
-The surprise is the point: keyword matching misses obvious synonyms ("rewards"≈"loyalty", "sign up"≈"join"). 
-A correct comment identifies this as the core weakness keyword RAG has and semantic RAG solves.
-"""
+# I predicted the query would match loyalty.txt, but it returned no results.
+# Keyword search missed synonyms like "rewards" and "loyalty" and "sign up" and "join."
+# This shows a weakness of keyword RAG and why semantic RAG works better.
 
 # --- Semantic RAG Concepts ---
 # Semantic Q1
@@ -282,7 +281,8 @@ print("\n LlamaIndex Q3:", response)
 for i, node in enumerate(response.source_nodes, start=1):
     print(f"\nChunk {i}")
     print("-" * 50)
-    print(node.text)
+    # To make the output easier to read, I truncated each retrieved chunk:
+    print(node.node.text[:150] + "...") 
     
 # I expected this query to be challenging because it requires the model
 # to combine information from multiple documents rather than retrieve
