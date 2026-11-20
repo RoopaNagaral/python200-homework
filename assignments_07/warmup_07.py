@@ -73,7 +73,7 @@ tools = [
 print('Temperature in Fahrenheit:')
 print(celsius_to_fahrenheit(0))
 print(celsius_to_fahrenheit(100))
-print(celsius_to_fahrenheit(-4))
+print(celsius_to_fahrenheit(-40))
 
 # Q2
 

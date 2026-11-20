@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from scipy.stats import pearsonr
 # smolagents imports
-from smolagents import ToolCallingAgent, OpenAIServerModel, tool
+from smolagents import OpenAIServerModel, tool
 from smolagents import CodeAgent
 
 import matplotlib
@@ -27,6 +27,7 @@ DATA_DIR = Path(__file__).parent / "happiness_project" #Path("happiness_project"
 DATA_DIR
 
 df = None
+df
 
 # Task 1: Define Your Tools
 # Tool 1: load_happiness_data
@@ -34,10 +35,26 @@ df = None
 @tool
 def load_happiness_data() -> dict:
     """
-    Load the World Happiness dataset into memory.
-    
-    Return:
-        A dict with loaded cvs file to Dataframe
+    Load and merge the World Happiness dataset into memory.
+
+    This tool reads all yearly CSV files from the happiness_project
+    directory, standardizes key column names, extracts the year from
+    each filename, and combines the files into a single pandas
+    DataFrame stored in the global variable `df`.
+
+    Use this tool before calling any other data-analysis tools. It
+    prepares the shared dataset that all other tools depend on.
+
+    Returns:
+        dict: Dataset metadata.
+
+        Example:
+            result = load_happiness_data()
+
+            result["shape"]
+            result["columns"]
+
+        Do not treat the return value as a pandas DataFrame.
     """
     
     global df
@@ -57,11 +74,16 @@ def load_happiness_data() -> dict:
         year_df["year"] = int(path.stem.split("_")[-1])   # "world_happiness_2020" -> 2020
         frames.append(year_df)
     
-    df = pd.concat(frames, ignore_index=True)
-    return df
+    if not frames:
+        return {
+            "error": f"No CSV files found in {DATA_DIR}"
+        }
         
-    
-#print(load_happiness_data())
+    df = pd.concat(frames, ignore_index=True)
+    return {
+        "shape": df.shape,
+        "columns": df.columns.tolist()
+    }
 
 # Tool 2: summarize_column
 
@@ -144,41 +166,39 @@ def compute_correlation(col1: str, col2: str) -> dict:
 def get_top_n_countries(column: str, year: int, n: int = 5) -> dict:
     """
     Return the top N countries ranked by a given column for a specific year.
-    
+
     Args:
-        column (str): Numeric column used for ranking.
+        column (str): Column used for ranking.
         year (int): Year to filter the dataset.
-        n (int, optional): Number of countries to return.
-            Defaults to 5.
+        n (int): Number of countries to return.
 
     Returns:
-        dict: A dictionary containing the ranked countries.
+        dict: Ranked countries and their values or an error message.
     """
-    
     global df
-    
+
     if df is None:
         return {"error": "Data not loaded. Run load_happiness_data first."}
-    
+
     if column not in df.columns:
         return {"error": f"Column '{column}' not found."}
-    
+
     try:
         year_df = df[df["year"] == year]
-    
+
         if year_df.empty:
             return {"error": f"No data found for year {year}."}
-    
-            top_n = (
-                year_df
-                .sort_values(by=column, ascending=False)
-                .head(n)[["country", column]]
-            )
-    
-            return {
-                "results": top_n.to_dict(orient="records")
-            }
-    
+
+        top_n = (
+            year_df
+            .sort_values(by=column, ascending=False)
+            .head(n)[["country", column]]
+        )
+
+        return {
+            "results": top_n.to_dict(orient="records")
+        }
+
     except Exception as e:
         return {"error": str(e)}
 
@@ -187,11 +207,27 @@ def get_top_n_countries(column: str, year: int, n: int = 5) -> dict:
 model = OpenAIServerModel(api_key=api_key, model_id="gpt-4o-mini")
 
 SYSTEM_PROMPT = """
-You are a data analyst assistant for the World Happiness dataset.
-Use the available tools for loading data, summarizing columns, computing correlations,
-and ranking countries. Write Python code directly only when the tools are not sufficient
-(for example, when creating custom plots or computing something the tools don't cover).
-Be concise and student-friendly in your responses.
+    You are a data analyst assistant for the World Happiness dataset.
+
+    Important:
+
+    - load_happiness_data() returns a DICTIONARY, not a DataFrame.
+    - The returned dictionary contains:
+        {
+            "shape": ...,
+            "columns": ...
+        }
+
+    - Never use:
+        result.shape
+        result.columns
+
+    - Instead use:
+        result["shape"]
+        result["columns"]
+
+    - Do not assume a variable named df exists.
+    - Use the provided tools whenever possible.
 """
 
 agent = CodeAgent(
@@ -202,40 +238,7 @@ agent = CodeAgent(
     max_steps=8,
 )
 
-# Task 3: Run Guided Queries
 
-queries = [
-    "Load the happiness data and tell me its shape and column names.",
-    "Summarize the happiness_score column.",
-    "What is the correlation between gdp_per_capita and happiness_score? Is it statistically significant?",
-    "Show me the top 5 happiest countries in 2020.",
-    "Plot happiness_score over the years as a line chart, with one line per region. Save the plot to outputs/happiness_by_region.png.",
-]
-
-for query in queries:
-    print(f"\n--- Query: {query} ---")
-    response = agent.run(query, reset=False)
-    print(response)
-
-# Task 4: Your Own Questions
-# My query 1
-my_query_1 = (
-    "What were the top 10 countries by happiness_score in 2024, "
-    "and what is the average happiness_score among those countries?"
-)   # replace with your question
-response_1 = agent.run(my_query_1, reset=False)
-print(response_1)
-# Comment: 
-# This should trigger tool use. The agent will likely call
-# get_top_n_countries() and may perform a small calculation on the results.
-
-# My query 2
-my_query_2 = (
-    "Create a line plot showing the average happiness_score for each year "
-    "from 2015 to 2024. Save the plot in outputs/ and briefly describe the trend."
-)   # replace with your question
-response_2 = agent.run(my_query_2, reset=False)
-print(response_2)
 # Comment:
 # This should trigger both tool use and code generation.
 # The agent needs the dataset loaded first, then it must write Python
@@ -266,64 +269,42 @@ print(response_2)
 #    requiring the agent to write extra analysis code.
 
 
-# Create the agent
-agent = CodeAgent(
-    tools=[
-        load_happiness_data,
-        summarize_column,
-        compute_correlation,
-        get_top_n_countries
-    ],
-    model=model,
-    instructions=SYSTEM_PROMPT,
-    additional_authorized_imports=[
-        "pandas",
-        "matplotlib.pyplot",
-        "scipy.stats"
-    ],
-    max_steps=8,
-)
-
-
 if __name__ == "__main__":
 
-    print("\n=== Query 1 ===")
-    response_1 = agent.run(
-        "Load the dataset and tell me how many rows and columns it contains."
-    )
-    print(response_1)
+    print("Loading data...")
+    print(load_happiness_data())
+    
+    # Task 3: Run Guided Queries
 
-    print("\n=== Query 2 ===")
-    response_2 = agent.run(
-        "Provide descriptive statistics for happiness_score."
-    )
-    print(response_2)
+    queries = [
+        "Call load_happiness_data and report the shape and columns returned by the tool.",
+        "Summarize the happiness_score column.",
+        "What is the correlation between gdp_per_capita and happiness_score? Is it statistically significant?",
+        "Show me the top 5 happiest countries in 2020.",
+        "Plot happiness_score over the years as a line chart, with one line per region. Save the plot to outputs/happiness_by_region.png.",
+    ]
 
-    print("\n=== Query 3 ===")
-    response_3 = agent.run(
-        "What is the correlation between happiness_score and gdp_per_capita?"
-    )
-    print(response_3)
-
-    print("\n=== Query 4 ===")
-    response_4 = agent.run(
-        "What are the top 10 countries by happiness_score in 2024?"
-    )
-    print(response_4)
-
-    print("\n=== My Query 1 ===")
+    for query in queries:
+        print(f"\n--- Query: {query} ---")
+        response = agent.run(query, reset=False)
+        print(response)
+        
+    # Task 4: Your Own Questions
+    # My query 1
     my_query_1 = (
         "What were the top 10 countries by happiness_score in 2024, "
-        "and what is the average happiness_score among them?"
-    )
-    response_5 = agent.run(my_query_1, reset=False)
-    print(response_5)
+        "and what is the average happiness_score among those countries?"
+    )   # replace with your question
+    response_1 = agent.run(my_query_1, reset=False)
+    print(response_1)
+    # Comment: 
+    # This should trigger tool use. The agent will likely call
+    # get_top_n_countries() and may perform a small calculation on the results.
 
-    print("\n=== My Query 2 ===")
+    # My query 2
     my_query_2 = (
-        "Create a line plot showing the average happiness_score for each "
-        "year from 2015 to 2024. Save the plot in outputs/ and describe "
-        "the overall trend."
-    )
-    response_6 = agent.run(my_query_2, reset=False)
-    print(response_6)
+        "Create a line plot showing the average happiness_score for each year "
+        "from 2015 to 2024. Save the plot in outputs/ and briefly describe the trend."
+    )   # replace with your question
+    response_2 = agent.run(my_query_2, reset=False)
+    print(response_2)
