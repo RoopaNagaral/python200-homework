@@ -195,9 +195,7 @@ def get_top_n_countries(column: str, year: int, n: int = 5) -> dict:
             .head(n)[["country", column]]
         )
 
-        return {
-            "results": top_n.to_dict(orient="records")
-        }
+        return  top_n.to_dict(orient="records")
 
     except Exception as e:
         return {"error": str(e)}
@@ -239,36 +237,6 @@ agent = CodeAgent(
 )
 
 
-# Comment:
-# This should trigger both tool use and code generation.
-# The agent needs the dataset loaded first, then it must write Python
-# code using pandas and matplotlib to group by year, create the chart,
-# and save it to outputs/.
-
-# Task 5: Reflection
-# --- Reflection ---
-#
-# 1. In Query 3, the agent reported both the Pearson correlation coefficient
-#    and the p-value returned by the compute_correlation tool. It described
-#    whether the relationship was positive or negative and indicated its
-#    strength. It also used the p-value to explain whether the correlation
-#    appeared statistically significant, which made the interpretation more
-#    meaningful than simply reporting the numbers.
-#
-# 2. One response that surprised me was when the agent generated code to
-#    create a visualization instead of only calling a tool. After loading
-#    the dataset, it grouped the data, created a plot, and saved it to the
-#    outputs folder. I expected it to rely mostly on tools, so seeing it
-#    write and execute code automatically was impressive.
-#
-# 3. One additional tool that would make this agent more useful is
-#    get_country_trend(country). This tool could return a country's
-#    happiness score over time from 2015–2024. It would help answer
-#    questions such as "How has Canada's happiness changed over the last
-#    decade?" or "Which countries improved the most over time?" without
-#    requiring the agent to write extra analysis code.
-
-
 if __name__ == "__main__":
 
     print("Loading data...")
@@ -308,3 +276,32 @@ if __name__ == "__main__":
     )   # replace with your question
     response_2 = agent.run(my_query_2, reset=False)
     print(response_2)
+    
+    # Comment:
+    # This should trigger both tool use and code generation.
+    # The agent needs the dataset loaded first, then it must write Python
+    # code using pandas and matplotlib to group by year, create the chart,
+    # and save it to outputs/.
+
+# Task 5: Reflection
+# --- Reflection ---
+#
+# 1. In Query 3, the agent reported both the Pearson correlation coefficient
+#    and the p-value returned by the compute_correlation tool. It described
+#    whether the relationship was positive or negative and indicated its
+#    strength. It also used the p-value to explain whether the correlation
+#    appeared statistically significant, which made the interpretation more
+#    meaningful than simply reporting the numbers.
+#
+# 2. One response that surprised me was when the agent generated code to
+#    create a visualization instead of only calling a tool. After loading
+#    the dataset, it grouped the data, created a plot, and saved it to the
+#    outputs folder. I expected it to rely mostly on tools, so seeing it
+#    write and execute code automatically was impressive.
+#
+# 3. One additional tool that would make this agent more useful is
+#    get_country_trend(country). This tool could return a country's
+#    happiness score over time from 2015–2024. It would help answer
+#    questions such as "How has Canada's happiness changed over the last
+#    decade?" or "Which countries improved the most over time?" without
+#    requiring the agent to write extra analysis code.
