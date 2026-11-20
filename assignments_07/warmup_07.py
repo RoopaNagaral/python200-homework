@@ -4,7 +4,12 @@ from datetime import datetime
 import json
 import os
 from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
+
 import pandas as pd
 from scipy.stats import pearsonr
 import sys
@@ -763,6 +768,7 @@ code_agent = CodeAgent(
     additional_authorized_imports=["pandas", "matplotlib.pyplot", "numpy"],
     max_steps=8,
 )
+
 
 prompt = "Load bike_commute.csv. Plot avg_heart_rate vs duration_min as a scatter plot with green dots."
 
