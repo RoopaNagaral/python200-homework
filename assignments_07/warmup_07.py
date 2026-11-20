@@ -768,15 +768,19 @@ prompt = "Load bike_commute.csv. Plot avg_heart_rate vs duration_min as a scatte
 
 print("\nQ8:")
 response_tool = tool_agent.run(prompt)
-response_code = code_agent.run(prompt, additional_args={"csv_manager": csv_manager})
+print("Tool Agent Response:")
+print(response_tool)
 
-"""
-The ToolCallingAgent can only call existing tools, so it cannot honor "green dots" unless a tool exposes color — 
-it produces the plot but not the custom styling.
-The CodeAgent writes matplotlib code directly, so it can make the dots green.
-Comment insight: tool-calling agents are constrained to predefined actions (safer, predictable); 
-code agents are flexible (handle novel/custom requests) but run generated code.
-"""
+response_code = code_agent.run(prompt, additional_args={"csv_manager": csv_manager})
+print("\nCode Agent Response:")
+print(response_code)
+
+# Comment:
+# The ToolCallingAgent primarily relied on the available tools to answer
+# the question. The CodeAgent was able to write and execute Python code
+# when needed, which allowed it to perform additional analysis beyond the
+# predefined tools. In this case, the CodeAgent provided a more flexible
+# solution because it could generate custom calculations directly from the dataset.
 
 # Q9
 # A ToolCallingAgent is better when the task maps to a fixed set of well-defined operations 
